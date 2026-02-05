@@ -68,7 +68,7 @@ export function Timer() {
             try {
                 alarmOsc.stop();
                 alarmOsc.disconnect();
-            } catch (e) { }
+            } catch { }
             setAlarmOsc(null);
         }
         if (alarmCtx) {

@@ -87,11 +87,7 @@ export function Calendar() {
         return entries.some(e => e.date === targetDate);
     };
 
-    const hasCompletedTimer = (day: number) => {
-        // TODO: Hook up with Timer completion history if we implement that feature separately
-        // For now, we only track Diary entries
-        return false;
-    };
+
 
     // Filter entries for selected date
     const selectedEntries = selectedDate
