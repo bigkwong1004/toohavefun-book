@@ -4,15 +4,20 @@
   --color-primary: #f49d25;
   --color-background-dark: #221a10;
   --color-background-light: #f8f7f5;
-  
+
   --font-display: "Manrope", "Noto Sans KR", sans-serif;
   --font-sans: "Noto Sans KR", sans-serif;
 
   --animate-tm: timer-ring 1s linear infinite;
 
   @keyframes timer-ring {
-    0% { stroke-dashoffset: 0; }
-    100% { stroke-dashoffset: 289; }
+    0% {
+      stroke-dashoffset: 0;
+    }
+
+    100% {
+      stroke-dashoffset: 289;
+    }
   }
 }
 
@@ -32,6 +37,7 @@
 /* Hide Scrollbar */
 @utility no-scrollbar {
   scrollbar-width: none;
+
   &::-webkit-scrollbar {
     display: none;
   }
