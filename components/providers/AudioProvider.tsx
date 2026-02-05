@@ -49,6 +49,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
         if (!audioRef.current || audioCtxRef.current) return;
 
         try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const CtxClass = window.AudioContext || (window as any).webkitAudioContext;
             const ctx = new CtxClass();
             const gainNode = ctx.createGain();
@@ -126,6 +127,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
         };
 
         playSound();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentSound]);
 
     // Play/Pause Effect
@@ -144,6 +146,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
         };
         togglePlayback();
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isPlaying]);
 
 

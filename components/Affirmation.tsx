@@ -28,7 +28,7 @@ export function Affirmation() {
     return (
         <div className="h-8 flex items-center justify-center overflow-hidden">
             <p className={`text-sm font-light text-white/80 text-center italic transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
-                "{QUOTES[index]}"
+                &quot;{QUOTES[index]}&quot;
             </p>
         </div>
     );

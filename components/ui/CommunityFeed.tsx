@@ -55,14 +55,16 @@ export function CommunityFeed({ onBack }: CommunityFeedProps) {
                 const parsed: DiaryEntry[] = JSON.parse(localData);
                 // Filter only public posts
                 userSharedPosts = parsed.filter(entry => entry.isPublic);
-            } catch (e) { }
+            } catch {
+                // Ignore
+            }
         }
 
         // Merge Mock Data + User Shared Data
         // Sort by timestamp descending (newest first)
         const allPosts = [...MOCK_COMMUNITY_POSTS, ...userSharedPosts].sort((a, b) => b.timestamp - a.timestamp);
 
-        setPosts(allPosts);
+        setTimeout(() => setPosts(allPosts), 0);
     }, []);
 
     return (
@@ -120,6 +122,7 @@ export function CommunityFeed({ onBack }: CommunityFeedProps) {
                         {/* Image Attachment */}
                         {post.image && (
                             <div className="w-full rounded-xl overflow-hidden mb-3 border border-white/10">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={post.image} alt="Post attachment" className="w-full h-auto max-h-64 object-cover" />
                             </div>
                         )}

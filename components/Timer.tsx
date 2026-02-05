@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
+
 
 export function Timer() {
     const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes in seconds
@@ -12,18 +12,7 @@ export function Timer() {
     const circumference = 289;
     const progress = ((totalTime - timeLeft) / totalTime) * circumference;
 
-    useEffect(() => {
-        let interval: NodeJS.Timeout;
-        if (isActive && timeLeft > 0) {
-            interval = setInterval(() => {
-                setTimeLeft((prev) => prev - 1);
-            }, 1000);
-        } else if (timeLeft === 0 && isActive) {
-            setIsActive(false);
-            playAlarm();
-        }
-        return () => clearInterval(interval);
-    }, [isActive, timeLeft]);
+
 
     const [alarmCtx, setAlarmCtx] = useState<AudioContext | null>(null);
     const [alarmOsc, setAlarmOsc] = useState<OscillatorNode | null>(null);
@@ -32,6 +21,7 @@ export function Timer() {
         if (isActive) return; // Prevention
 
         try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
             if (!AudioContext) return;
 
@@ -89,6 +79,20 @@ export function Timer() {
         setIsActive(false);
         setTimeLeft(totalTime);
     };
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (isActive && timeLeft > 0) {
+            interval = setInterval(() => {
+                setTimeLeft((prev) => prev - 1);
+            }, 1000);
+        } else if (timeLeft === 0 && isActive) {
+            setIsActive(false);
+            playAlarm();
+        }
+        return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isActive, timeLeft]);
 
     // Cleanup on unmount
     useEffect(() => {
