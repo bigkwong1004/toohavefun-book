@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 
-export interface DiaryEntry {
+interface DiaryEntry {
     id: string;
     date: string;
     bookTitle: string;
@@ -15,7 +15,11 @@ export interface DiaryEntry {
     timestamp: number;
 }
 
-export function ReadingDiary() {
+interface ReadingDiaryProps {
+    onBack?: () => void;
+}
+
+export function ReadingDiary({ onBack }: ReadingDiaryProps) {
     const [entries, setEntries] = useState<DiaryEntry[]>([]);
     const [isWriting, setIsWriting] = useState(false);
 
@@ -28,6 +32,7 @@ export function ReadingDiary() {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // Load saved data
     useEffect(() => {
         const saved = localStorage.getItem('reading-diary');
         if (saved) {
@@ -72,6 +77,8 @@ export function ReadingDiary() {
 
         const updated = [newEntry, ...entries];
         setEntries(updated);
+        // eslint-disable-next-line
+        // @ts-ignore
         localStorage.setItem('reading-diary', JSON.stringify(updated));
 
         // Reset and close
@@ -193,9 +200,16 @@ export function ReadingDiary() {
     return (
         <GlassPanel className="w-full h-full p-0 flex flex-col relative overflow-hidden">
             <div className="p-6 border-b border-white/5 flex justify-between items-center shrink-0">
-                <div>
-                    <h2 className="text-lg font-light">독서 기록장</h2>
-                    <p className="text-[10px] text-white/30 uppercase tracking-widest">나의 생각들</p>
+                <div className="flex items-center gap-3">
+                    {onBack && (
+                        <button onClick={onBack} className="p-1 -ml-2 hover:bg-white/10 rounded-full transition-colors">
+                            <span className="material-symbols-outlined">arrow_back</span>
+                        </button>
+                    )}
+                    <div>
+                        <h2 className="text-lg font-light">독서 기록장</h2>
+                        <p className="text-[10px] text-white/30 uppercase tracking-widest">나의 생각들</p>
+                    </div>
                 </div>
                 <button
                     onClick={() => setIsWriting(true)}

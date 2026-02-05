@@ -140,12 +140,12 @@ export function Timer() {
             {!alarmOsc ? (
                 <button
                     onClick={toggleTimer}
-                    className="mt-14 size-20 rounded-full flex items-center justify-center text-white bg-white/25 hover:bg-white/35 backdrop-blur-md transition-all active:scale-95 border border-white/30 shadow-lg shadow-black/20"
+                    className="mt-14 size-20 rounded-full flex items-center justify-center text-white bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all active:scale-95 border border-white/50 shadow-[0_0_30px_rgba(255,255,255,0.15)] group"
                 >
                     {isActive ? (
-                        <span className="material-symbols-outlined text-4xl">pause</span>
+                        <span className="material-symbols-outlined text-4xl group-hover:scale-110 transition-transform">pause</span>
                     ) : (
-                        <span className="material-symbols-outlined text-4xl fill-1 ml-1">play_arrow</span>
+                        <span className="material-symbols-outlined text-4xl ml-1 group-hover:scale-110 transition-transform">play_arrow</span>
                     )}
                 </button>
             ) : (

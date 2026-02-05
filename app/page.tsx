@@ -84,80 +84,104 @@ function AudioControls() {
   );
 }
 
+// Theme Colors Mapping
+const THEME_COLORS: Record<string, string> = {
+  library: "#D4AF37", // Gold
+  subway: "#3B82F6",  // Blue
+  beach: "#06B6D4",   // Cyan
+  fire: "#EF4444",    // Red
+  cafe: "#8B4513",    // Brown
+  rain: "#60A5FA",    // Light Blue
+  forest: "#10B981",  // Green
+};
+
 export default function Home() {
   const [view, setView] = useState<'timer' | 'calendar' | 'diary' | 'community'>('timer');
 
   return (
     <AudioProvider>
-      <div className="relative min-h-screen flex flex-col">
-        <BackgroundImage />
-
-        <main className="relative z-10 flex-1 flex flex-col max-w-md mx-auto w-full p-6 h-screen">
-
-          {/* Header */}
-          <header className="flex flex-col items-center gap-4 mt-4 shrink-0 w-full">
-            <ThemeSelector />
-            <Affirmation />
-            <AudioControls />
-          </header>
-
-          {/* Main Content View */}
-          <section className="flex-1 flex flex-col justify-center relative overflow-hidden my-4 min-h-0">
-            {view === 'timer' && <Timer />}
-            {view === 'calendar' && <Calendar />}
-            {view === 'diary' && <ReadingDiary />}
-            {view === 'community' && <CommunityFeed onBack={() => setView('timer')} />}
-          </section>
-
-          {/* AdSense Placeholder */}
-          <div className="shrink-0 mb-4 w-full">
-            <AdSensePlaceholder />
-          </div>
-
-          {/* Navigation Bar */}
-          <nav className="glass-nav rounded-2xl p-2 mt-auto shrink-0 mb-4">
-            <ul className="flex justify-around items-center">
-              <li className="flex-1">
-                <button
-                  onClick={() => setView('timer')}
-                  className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'timer' ? 'text-primary bg-white/5' : 'text-white/40'}`}
-                >
-                  <span className="material-symbols-outlined text-2xl">timer</span>
-                  <span className="text-[9px] font-bold uppercase tracking-tighter">타이머</span>
-                </button>
-              </li>
-              <li className="flex-1">
-                <button
-                  onClick={() => setView('calendar')}
-                  className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'calendar' ? 'text-primary bg-white/5' : 'text-white/40'}`}
-                >
-                  <span className="material-symbols-outlined text-2xl">calendar_month</span>
-                  <span className="text-[9px] font-bold uppercase tracking-tighter">히스토리</span>
-                </button>
-              </li>
-              <li className="flex-1">
-                <button
-                  onClick={() => setView('diary')}
-                  className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'diary' ? 'text-primary bg-white/5' : 'text-white/40'}`}
-                >
-                  <span className="material-symbols-outlined text-2xl">auto_stories</span>
-                  <span className="text-[9px] font-bold uppercase tracking-tighter">다이어리</span>
-                </button>
-              </li>
-              <li className="flex-1">
-                <button
-                  onClick={() => setView('community')}
-                  className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'community' ? 'text-primary bg-white/5' : 'text-white/40'}`}
-                >
-                  <span className="material-symbols-outlined text-2xl">groups</span>
-                  <span className="text-[9px] font-bold uppercase tracking-tighter">커뮤니티</span>
-                </button>
-              </li>
-            </ul>
-          </nav>
-
-        </main>
-      </div>
+      <ThemeWrapper view={view} setView={setView} />
     </AudioProvider>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ThemeWrapper({ view, setView }: { view: string, setView: any }) {
+  const { currentSound } = useAudio();
+  const themeColor = currentSound ? THEME_COLORS[currentSound.id] : THEME_COLORS['rain'];
+
+  return (
+    <div
+      className="relative min-h-screen flex flex-col"
+      style={{ "--color-primary": themeColor } as React.CSSProperties}
+    >
+      <BackgroundImage />
+
+      <main className="relative z-10 flex-1 flex flex-col max-w-md mx-auto w-full p-6 h-screen">
+
+        {/* Header */}
+        <header className="flex flex-col items-center gap-4 mt-4 shrink-0 w-full">
+          <ThemeSelector />
+          <Affirmation />
+          <AudioControls />
+        </header>
+
+        {/* Main Content View */}
+        <section className="flex-1 flex flex-col justify-center relative overflow-hidden my-4 min-h-0">
+          {view === 'timer' && <Timer />}
+          {view === 'calendar' && <Calendar />}
+          {view === 'diary' && <ReadingDiary onBack={() => setView('timer')} />}
+          {view === 'community' && <CommunityFeed onBack={() => setView('timer')} />}
+        </section>
+
+        {/* AdSense Placeholder */}
+        <div className="shrink-0 mb-4 w-full">
+          <AdSensePlaceholder />
+        </div>
+
+        {/* Navigation Bar */}
+        <nav className="glass-nav rounded-2xl p-2 mt-auto shrink-0 mb-4">
+          <ul className="flex justify-around items-center">
+            <li className="flex-1">
+              <button
+                onClick={() => setView('timer')}
+                className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'timer' ? 'text-primary bg-white/5' : 'text-white/40'}`}
+              >
+                <span className="material-symbols-outlined text-2xl">timer</span>
+                <span className="text-[9px] font-bold uppercase tracking-tighter">타이머</span>
+              </button>
+            </li>
+            <li className="flex-1">
+              <button
+                onClick={() => setView('calendar')}
+                className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'calendar' ? 'text-primary bg-white/5' : 'text-white/40'}`}
+              >
+                <span className="material-symbols-outlined text-2xl">calendar_month</span>
+                <span className="text-[9px] font-bold uppercase tracking-tighter">히스토리</span>
+              </button>
+            </li>
+            <li className="flex-1">
+              <button
+                onClick={() => setView('diary')}
+                className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'diary' ? 'text-primary bg-white/5' : 'text-white/40'}`}
+              >
+                <span className="material-symbols-outlined text-2xl">auto_stories</span>
+                <span className="text-[9px] font-bold uppercase tracking-tighter">다이어리</span>
+              </button>
+            </li>
+            <li className="flex-1">
+              <button
+                onClick={() => setView('community')}
+                className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'community' ? 'text-primary bg-white/5' : 'text-white/40'}`}
+              >
+                <span className="material-symbols-outlined text-2xl">groups</span>
+                <span className="text-[9px] font-bold uppercase tracking-tighter">커뮤니티</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+      </main>
+    </div>
   );
 }
