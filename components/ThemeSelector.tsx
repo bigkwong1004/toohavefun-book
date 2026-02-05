@@ -18,7 +18,7 @@ export function ThemeSelector() {
                         onClick={() => selectSound(sound)}
                         className={cn(
                             "group relative flex flex-col items-center justify-center transition-all duration-300 min-w-[3rem]",
-                            isActive && isPlaying ? "text-primary scale-110" : "text-white/50 hover:text-white/80 hover:scale-105"
+                            isActive && isPlaying ? "text-primary scale-110" : "text-white/75 hover:text-white/90 hover:scale-105"
                         )}
                         title={sound.name}
                     >

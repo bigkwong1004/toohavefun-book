@@ -136,7 +136,7 @@ export function Timer() {
             {!alarmOsc ? (
                 <button
                     onClick={toggleTimer}
-                    className="mt-14 size-20 rounded-full flex items-center justify-center text-white bg-white/5 hover:bg-white/10 backdrop-blur-md transition-all active:scale-95"
+                    className="mt-14 size-20 rounded-full flex items-center justify-center text-white bg-white/25 hover:bg-white/35 backdrop-blur-md transition-all active:scale-95 border border-white/30 shadow-lg shadow-black/20"
                 >
                     {isActive ? (
                         <span className="material-symbols-outlined text-4xl">pause</span>

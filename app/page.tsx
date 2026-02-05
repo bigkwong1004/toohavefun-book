@@ -37,15 +37,15 @@ function BackgroundImage() {
 }
 
 function AudioControls() {
-  const { volume, setVolume, isLooping, toggleLoop, currentSound, isPlaying, togglePlay } = useAudio();
+  const { volume, setVolume, isLooping, toggleLoop, currentSound, isPlaying, togglePlay, isMuted, toggleMute } = useAudio();
 
   if (!currentSound) return null;
 
   return (
-    <GlassPanel className="w-full p-4 mt-4 flex items-center gap-4 animate-in fade-in slide-in-from-top-2">
+    <GlassPanel className="w-full p-4 mt-4 flex items-center gap-4 animate-in fade-in slide-in-from-top-2 bg-white/15">
       <button
         onClick={togglePlay}
-        className="size-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors shrink-0"
+        className="size-10 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors shrink-0"
       >
         <span className="material-symbols-outlined text-xl">
           {isPlaying ? 'pause' : 'play_arrow'}
@@ -54,14 +54,22 @@ function AudioControls() {
 
       <button
         onClick={toggleLoop}
-        className={`p-2 rounded-full transition-colors shrink-0 ${isLooping ? 'bg-primary text-black' : 'bg-white/5 text-white/50'}`}
+        className={`p-2 rounded-full transition-colors shrink-0 ${isLooping ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'bg-white/10 text-white/70'}`}
         title="반복 재생"
       >
         <span className="material-symbols-outlined text-sm">repeat</span>
       </button>
 
       <div className="flex items-center gap-2 flex-1 min-w-0">
-        <span className="material-symbols-outlined text-white/50 text-sm">volume_down</span>
+        <button
+          onClick={toggleMute}
+          className={`p-2 rounded-full transition-colors shrink-0 ${isMuted ? 'bg-red-500/20 text-red-200 border border-red-500/30' : 'bg-white/10 text-white/90 border border-white/10'}`}
+          title={isMuted ? "음소거 해제" : "음소거"}
+        >
+          <span className="material-symbols-outlined text-sm">
+            {isMuted ? 'volume_off' : (volume === 0 ? 'volume_mute' : 'volume_up')}
+          </span>
+        </button>
         <input
           type="range"
           min="0"
