@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #f49d25;
+  --color-background-dark: #221a10;
+  --color-background-light: #f8f7f5;
+  
+  --font-display: "Manrope", "Noto Sans KR", sans-serif;
+  --font-sans: "Noto Sans KR", sans-serif;
+
+  --animate-tm: timer-ring 1s linear infinite;
+
+  @keyframes timer-ring {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 289; }
+  }
+}
+
+/* Custom Utilities for Glassmorphism */
+@utility glass-panel {
+  @apply bg-white/10 backdrop-blur-md border border-white/10 shadow-xl;
+}
+
+@utility glass-item {
+  @apply bg-white/5 backdrop-blur-sm border border-white/5;
+}
+
+@utility glass-nav {
+  @apply bg-black/40 backdrop-blur-xl border-t border-white/5;
+}
+
+/* Hide Scrollbar */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Reset & Base */
+body {
+  @apply bg-background-dark text-white font-sans overflow-hidden antialiased;
+}
