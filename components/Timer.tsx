@@ -111,13 +111,14 @@ export function Timer() {
     const toggleTimer = () => setIsActive(!isActive);
 
     return (
-        <div className="flex flex-col items-center">
-            <div className="relative size-72 sm:size-80">
+        <div className="flex flex-col items-center justify-center h-full">
+            {/* Timer Ring Container - Reduced size for mobile */}
+            <div className="relative size-60 sm:size-80 transition-all duration-300">
                 <div className="absolute inset-0 flex items-center justify-center z-10 flex-col">
-                    <span className="text-7xl font-light tracking-tighter text-white font-display">
+                    <span className="text-6xl sm:text-7xl font-light tracking-tighter text-white font-display transition-all">
                         {formatTime(timeLeft)}
                     </span>
-                    <p className="text-[10px] font-bold text-white/40 tracking-[0.3em] uppercase mt-4">
+                    <p className="text-[10px] sm:text-xs font-bold text-white/40 tracking-[0.3em] uppercase mt-4">
                         {isActive ? '집중하는 중...' : '집중 시간'}
                     </p>
                 </div>
@@ -136,16 +137,16 @@ export function Timer() {
                 </svg>
             </div>
 
-            {/* Play Button */}
+            {/* Play Button - High Visibility update */}
             {!alarmOsc ? (
                 <button
                     onClick={toggleTimer}
-                    className="mt-14 size-20 rounded-full flex items-center justify-center text-white bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all active:scale-95 border border-white/50 shadow-[0_0_30px_rgba(255,255,255,0.15)] group"
+                    className="mt-8 sm:mt-12 size-16 sm:size-20 rounded-full flex items-center justify-center text-black bg-primary hover:brightness-110 transition-all active:scale-95 shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] group z-20"
                 >
                     {isActive ? (
-                        <span className="material-symbols-outlined text-4xl group-hover:scale-110 transition-transform">pause</span>
+                        <span className="material-symbols-outlined text-4xl">pause</span>
                     ) : (
-                        <span className="material-symbols-outlined text-4xl ml-1 group-hover:scale-110 transition-transform">play_arrow</span>
+                        <span className="material-symbols-outlined text-4xl ml-1">play_arrow</span>
                     )}
                 </button>
             ) : (
