@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 
-interface DiaryEntry {
+export interface DiaryEntry {
     id: string;
     date: string;
     bookTitle: string;

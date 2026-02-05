@@ -7,7 +7,7 @@ const nextConfig = {
   },
   // Ensure build passes even if there are minor lint/type errors
   typescript: {
-    ignoreBuildErrors: true,
+    // ignoreBuildErrors: false,
   },
 };
 
