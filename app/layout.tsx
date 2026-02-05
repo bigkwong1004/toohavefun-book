@@ -7,7 +7,7 @@ const notoSansKr = Noto_Sans_KR({ subsets: ["latin"], weight: ["100", "300", "40
 
 export const metadata: Metadata = {
   title: "Reading Flow",
-  description: "Immersive Reading Timer & Focus App",
+  description: "몰입을 위한 독서 타이머 & 포커스 앱",
 };
 
 export default function RootLayout({

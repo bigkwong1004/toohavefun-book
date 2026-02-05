@@ -25,28 +25,77 @@ export function Timer() {
         return () => clearInterval(interval);
     }, [isActive, timeLeft]);
 
+    const [alarmCtx, setAlarmCtx] = useState<AudioContext | null>(null);
+    const [alarmOsc, setAlarmOsc] = useState<OscillatorNode | null>(null);
+
     const playAlarm = () => {
-        // Simple Web Audio API beep
-        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-        if (!AudioContext) return;
+        if (isActive) return; // Prevention
 
-        const ctx = new AudioContext();
-        const oscillator = ctx.createOscillator();
-        const gainNode = ctx.createGain();
+        try {
+            const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+            if (!AudioContext) return;
 
-        oscillator.connect(gainNode);
-        gainNode.connect(ctx.destination);
+            const ctx = new AudioContext();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
 
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(440, ctx.currentTime); // A4
-        oscillator.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.5); // Slide up
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
 
-        gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 2); // Fade out
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(440, ctx.currentTime);
 
-        oscillator.start();
-        oscillator.stop(ctx.currentTime + 2); // Stop after 2 seconds
+            // Loop effect: Ramp up and down rapidly
+            const now = ctx.currentTime;
+            // Simple alarm pattern beep-beep-beep
+            // Ideally we'd loop a buffer source, but oscillator is easier for code-only
+            // We can just let it ring continuous or pulsate
+
+            // Pulsating alert sound
+            oscillator.frequency.setValueAtTime(880, now);
+            gainNode.gain.setValueAtTime(0.1, now);
+
+            // LFO for pulsing
+            const lfo = ctx.createOscillator();
+            lfo.type = 'square';
+            lfo.frequency.value = 4; // 4hz pulse
+            const lfoGain = ctx.createGain();
+            lfoGain.gain.value = 500;
+            lfo.connect(lfoGain);
+            lfoGain.connect(oscillator.frequency);
+            lfo.start();
+
+            oscillator.start();
+            setAlarmCtx(ctx);
+            setAlarmOsc(oscillator);
+        } catch (e) {
+            console.error("Alarm error", e);
+        }
     };
+
+    const stopAlarm = () => {
+        if (alarmOsc) {
+            try {
+                alarmOsc.stop();
+                alarmOsc.disconnect();
+            } catch (e) { }
+            setAlarmOsc(null);
+        }
+        if (alarmCtx) {
+            alarmCtx.close();
+            setAlarmCtx(null);
+        }
+        // Also ensure timer is reset
+        setIsActive(false);
+        setTimeLeft(totalTime);
+    };
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (alarmCtx) alarmCtx.close();
+        };
+    }, [alarmCtx]);
 
 
     const formatTime = (seconds: number) => {
@@ -65,7 +114,7 @@ export function Timer() {
                         {formatTime(timeLeft)}
                     </span>
                     <p className="text-[10px] font-bold text-white/40 tracking-[0.3em] uppercase mt-4">
-                        {isActive ? 'Focusing...' : 'Focus Time'}
+                        {isActive ? '집중하는 중...' : '집중 시간'}
                     </p>
                 </div>
                 {/* SVG Ring */}
@@ -84,16 +133,26 @@ export function Timer() {
             </div>
 
             {/* Play Button */}
-            <button
-                onClick={toggleTimer}
-                className="mt-14 size-20 rounded-full flex items-center justify-center text-white bg-white/5 hover:bg-white/10 backdrop-blur-md transition-all active:scale-95"
-            >
-                {isActive ? (
-                    <span className="material-symbols-outlined text-4xl">pause</span>
-                ) : (
-                    <span className="material-symbols-outlined text-4xl fill-1 ml-1">play_arrow</span>
-                )}
-            </button>
+            {!alarmOsc ? (
+                <button
+                    onClick={toggleTimer}
+                    className="mt-14 size-20 rounded-full flex items-center justify-center text-white bg-white/5 hover:bg-white/10 backdrop-blur-md transition-all active:scale-95"
+                >
+                    {isActive ? (
+                        <span className="material-symbols-outlined text-4xl">pause</span>
+                    ) : (
+                        <span className="material-symbols-outlined text-4xl fill-1 ml-1">play_arrow</span>
+                    )}
+                </button>
+            ) : (
+                <button
+                    onClick={stopAlarm}
+                    className="mt-14 px-8 py-4 rounded-full flex items-center justify-center text-white bg-red-500/20 hover:bg-red-500/30 backdrop-blur-md transition-all active:scale-95 border border-red-500/50 animate-pulse"
+                >
+                    <span className="material-symbols-outlined text-2xl mr-2">notifications_off</span>
+                    <span className="font-bold uppercase tracking-widest text-sm">알람 끄기</span>
+                </button>
+            )}
         </div>
     );
 }

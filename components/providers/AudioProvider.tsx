@@ -19,7 +19,9 @@ interface AudioContextType {
     currentSound: Sound | null;
     isPlaying: boolean;
     volume: number;
+    isLooping: boolean;
     togglePlay: () => void;
+    toggleLoop: () => void;
     setVolume: (vol: number) => void;
     selectSound: (sound: Sound) => void;
 }
@@ -31,32 +33,53 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     const [currentSound, setCurrentSound] = useState<Sound | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolumeState] = useState(0.5);
+    const [isLooping, setIsLooping] = useState(true);
 
-    useEffect(() => {
-        // Cleanup function for audioRef.current
-        return () => {
-            if (audioRef.current) {
-                audioRef.current.pause();
-                // No need to set audioRef.current = null as it's managed by React's ref system
-            }
-        };
-    }, []);
-
+    // Audio Volume & Loop Effect
     useEffect(() => {
         if (audioRef.current) {
-            audioRef.current.volume = volume;
+            audioRef.current.volume = Math.max(0, Math.min(1, volume));
+            audioRef.current.loop = isLooping;
         }
-    }, [volume]);
+    }, [volume, isLooping]);
+
+    // Playback Trigger Effect
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio || !currentSound) return;
+
+        const playSound = async () => {
+            try {
+                audio.src = currentSound.file;
+                audio.load();
+                if (isPlaying) {
+                    await audio.play();
+                }
+            } catch (err) {
+                console.error("Audio playback error:", err);
+                // Optional: alert only on user interaction if needed, but console is safer for now
+            }
+        };
+
+        playSound();
+    }, [currentSound]); // Re-run when currentSound changes
+
+    // Play/Pause Effect
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio || !currentSound) return;
+
+        if (isPlaying) {
+            audio.play().catch(e => console.error("Resume failed", e));
+        } else {
+            audio.pause();
+        }
+    }, [isPlaying]);
+
 
     const togglePlay = () => {
-        if (!audioRef.current || !currentSound) return;
-        if (isPlaying) {
-            audioRef.current.pause();
-            setIsPlaying(false);
-        } else {
-            audioRef.current.play().catch(e => console.error("Play failed", e));
-            setIsPlaying(true);
-        }
+        if (!currentSound) return;
+        setIsPlaying(!isPlaying);
     };
 
     const setVolume = (vol: number) => {
@@ -68,35 +91,18 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
             togglePlay();
         } else {
             setCurrentSound(sound);
-            setIsPlaying(true);
-            // Wait for React to update the src prop on the audio element
-            setTimeout(() => {
-                if (audioRef.current) {
-                    audioRef.current.load();
-                    audioRef.current.play().catch(err => {
-                        console.error("Playback Error:", err);
-                        alert(`오디오 재생 오류: ${err.message}\n파일 경로를 확인해주세요.`);
-                        setIsPlaying(false);
-                    });
-                }
-            }, 50);
+            setIsPlaying(true); // This will trigger the useEffect to play
         }
     };
 
+    const toggleLoop = () => setIsLooping(!isLooping);
+
     return (
-        <AudioContext.Provider value={{ currentSound, isPlaying, volume, togglePlay, setVolume, selectSound }}>
+        <AudioContext.Provider value={{ currentSound, isPlaying, volume, isLooping, togglePlay, toggleLoop, setVolume, selectSound }}>
             {children}
             <audio
                 ref={audioRef}
-                src={currentSound?.file || ""}
-                loop
-                onError={(e) => {
-                    console.error("Audio Load Error", e);
-                    if (currentSound) {
-                        // Only alert if we actually tried to play something
-                        console.log(`Failed to load: ${currentSound.file}`);
-                    }
-                }}
+                onError={(e) => console.error("Audio tag error:", e)}
             />
         </AudioContext.Provider>
     );

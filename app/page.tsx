@@ -1,27 +1,83 @@
 "use client";
 
-import { AudioProvider } from "@/components/providers/AudioProvider";
+import { AudioProvider, useAudio } from "@/components/providers/AudioProvider";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { Timer } from "@/components/Timer";
 import { ReadingDiary } from "@/components/ReadingDiary";
 import { Affirmation } from "@/components/Affirmation";
 import { useState } from "react";
 import { GlassPanel } from "@/components/ui/GlassPanel";
+import { Calendar } from "@/components/ui/Calendar";
+import { AdSensePlaceholder } from "@/components/ui/AdSensePlaceholder";
+import { CommunityFeed } from "@/components/ui/CommunityFeed";
+
+// Background Mapping
+const BACKGROUNDS: Record<string, string> = {
+  library: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1920&q=80",
+  subway: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1920&q=80", // Updated: Moody Subway
+  beach: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",
+  fire: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&w=1920&q=80", // Updated: Cozy Campfire
+  cafe: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1920&q=80",
+  rain: "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=1920&q=80",
+  forest: "https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&w=1920&q=80",
+};
 
 function BackgroundImage() {
-  // TODO: Make this dynamic based on theme
+  const { currentSound } = useAudio();
+  const bgImage = currentSound ? BACKGROUNDS[currentSound.id] : BACKGROUNDS['rain']; // Default to rain/window
+
   return (
     <div
       className="absolute inset-0 bg-cover bg-center transition-all duration-1000 z-0 bg-fixed"
-      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=1920&q=80')" }}
+      style={{ backgroundImage: `url('${bgImage}')` }}
     >
       <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
     </div>
   );
 }
 
+function AudioControls() {
+  const { volume, setVolume, isLooping, toggleLoop, currentSound, isPlaying, togglePlay } = useAudio();
+
+  if (!currentSound) return null;
+
+  return (
+    <GlassPanel className="w-full p-4 mt-4 flex items-center gap-4 animate-in fade-in slide-in-from-top-2">
+      <button
+        onClick={togglePlay}
+        className="size-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors shrink-0"
+      >
+        <span className="material-symbols-outlined text-xl">
+          {isPlaying ? 'pause' : 'play_arrow'}
+        </span>
+      </button>
+
+      <button
+        onClick={toggleLoop}
+        className={`p-2 rounded-full transition-colors shrink-0 ${isLooping ? 'bg-primary text-black' : 'bg-white/5 text-white/50'}`}
+        title="반복 재생"
+      >
+        <span className="material-symbols-outlined text-sm">repeat</span>
+      </button>
+
+      <div className="flex items-center gap-2 flex-1 min-w-0">
+        <span className="material-symbols-outlined text-white/50 text-sm">volume_down</span>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value={volume}
+          onChange={(e) => setVolume(parseFloat(e.target.value))}
+          className="flex-1 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
+        />
+      </div>
+    </GlassPanel>
+  );
+}
+
 export default function Home() {
-  const [view, setView] = useState<'timer' | 'calendar' | 'diary'>('timer');
+  const [view, setView] = useState<'timer' | 'calendar' | 'diary' | 'community'>('timer');
 
   return (
     <AudioProvider>
@@ -31,21 +87,24 @@ export default function Home() {
         <main className="relative z-10 flex-1 flex flex-col max-w-md mx-auto w-full p-6 h-screen">
 
           {/* Header */}
-          <header className="flex flex-col items-center gap-6 mt-4 shrink-0">
+          <header className="flex flex-col items-center gap-4 mt-4 shrink-0 w-full">
             <ThemeSelector />
             <Affirmation />
+            <AudioControls />
           </header>
 
           {/* Main Content View */}
-          <section className="flex-1 flex flex-col justify-center relative overflow-hidden my-4">
+          <section className="flex-1 flex flex-col justify-center relative overflow-hidden my-4 min-h-0">
             {view === 'timer' && <Timer />}
-            {view === 'calendar' && (
-              <GlassPanel className="w-full h-full p-8 flex items-center justify-center">
-                <p className="text-white/50">Calendar Coming Soon</p>
-              </GlassPanel>
-            )}
+            {view === 'calendar' && <Calendar />}
             {view === 'diary' && <ReadingDiary />}
+            {view === 'community' && <CommunityFeed onBack={() => setView('timer')} />}
           </section>
+
+          {/* AdSense Placeholder */}
+          <div className="shrink-0 mb-4 w-full">
+            <AdSensePlaceholder />
+          </div>
 
           {/* Navigation Bar */}
           <nav className="glass-nav rounded-2xl p-2 mt-auto shrink-0 mb-4">
@@ -56,7 +115,7 @@ export default function Home() {
                   className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'timer' ? 'text-primary bg-white/5' : 'text-white/40'}`}
                 >
                   <span className="material-symbols-outlined text-2xl">timer</span>
-                  <span className="text-[9px] font-bold uppercase tracking-tighter">Timer</span>
+                  <span className="text-[9px] font-bold uppercase tracking-tighter">타이머</span>
                 </button>
               </li>
               <li className="flex-1">
@@ -65,7 +124,7 @@ export default function Home() {
                   className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'calendar' ? 'text-primary bg-white/5' : 'text-white/40'}`}
                 >
                   <span className="material-symbols-outlined text-2xl">calendar_month</span>
-                  <span className="text-[9px] font-bold uppercase tracking-tighter">History</span>
+                  <span className="text-[9px] font-bold uppercase tracking-tighter">히스토리</span>
                 </button>
               </li>
               <li className="flex-1">
@@ -74,7 +133,16 @@ export default function Home() {
                   className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'diary' ? 'text-primary bg-white/5' : 'text-white/40'}`}
                 >
                   <span className="material-symbols-outlined text-2xl">auto_stories</span>
-                  <span className="text-[9px] font-bold uppercase tracking-tighter">Diary</span>
+                  <span className="text-[9px] font-bold uppercase tracking-tighter">다이어리</span>
+                </button>
+              </li>
+              <li className="flex-1">
+                <button
+                  onClick={() => setView('community')}
+                  className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'community' ? 'text-primary bg-white/5' : 'text-white/40'}`}
+                >
+                  <span className="material-symbols-outlined text-2xl">groups</span>
+                  <span className="text-[9px] font-bold uppercase tracking-tighter">커뮤니티</span>
                 </button>
               </li>
             </ul>
