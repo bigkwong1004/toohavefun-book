@@ -102,43 +102,34 @@ export function Timer() {
     const toggleTimer = () => setIsActive(!isActive);
 
     return (
-        <div className="flex flex-col items-center justify-start h-full min-h-[400px] pt-24 sm:pt-32 pb-40">
-            {/* Plain Text Timer */}
-            <div className="flex flex-col items-center justify-center mb-10">
-                <span className="text-8xl sm:text-9xl font-light tracking-tighter text-white font-display tabular-nums transition-all drop-shadow-2xl">
-                    {formatTime(timeLeft)}
-                </span>
-                <p className="text-sm sm:text-base font-bold text-white/60 tracking-[0.5em] uppercase mt-4">
-                    {isActive ? '집중하는 중...' : '집중 시간'}
-                </p>
+        <div className="flex flex-col items-center justify-center mb-6">
+            <div className="text-white text-8xl font-thin tracking-tighter drop-shadow-2xl font-mono tabular-nums">
+                {formatTime(timeLeft)}
             </div>
+            <span className="text-orange-300 text-sm tracking-widest uppercase mt-2 opacity-80">
+                Focus Time
+            </span>
 
-            {/* Play Button - High Visibility update */}
-            {!alarmOsc ? (
-                <button
-                    onClick={toggleTimer}
-                    className="group relative flex items-center justify-center gap-4 px-12 py-6 rounded-full bg-white text-black transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] z-20"
-                >
-                    <div className={`transition-all duration-300 ${isActive ? 'scale-90' : 'scale-100'}`}>
-                        {isActive ? (
-                            <span className="material-symbols-outlined text-4xl">pause</span>
-                        ) : (
-                            <span className="material-symbols-outlined text-4xl">play_arrow</span>
-                        )}
-                    </div>
-                    <span className="text-xl font-bold tracking-widest uppercase">
-                        {isActive ? '일시정지' : '시작하기'}
-                    </span>
-                </button>
-            ) : (
-                <button
-                    onClick={stopAlarm}
-                    className="px-12 py-6 rounded-full flex items-center justify-center text-white bg-red-500 hover:bg-red-600 transition-all active:scale-95 shadow-[0_0_50px_rgba(239,68,68,0.6)] animate-pulse"
-                >
-                    <span className="material-symbols-outlined text-3xl mr-3">notifications_off</span>
-                    <span className="font-bold uppercase tracking-widest text-lg">알람 끄기</span>
-                </button>
-            )}
+            {/* 재생/일시정지 버튼 (반원 형태) */}
+            <div className="mt-12">
+                {!alarmOsc ? (
+                    <button
+                        onClick={toggleTimer}
+                        className="w-24 h-12 bg-white/20 backdrop-blur-sm rounded-t-full border-t border-l border-r border-white/30 hover:bg-white/30 active:scale-95 transition flex items-end justify-center pb-2"
+                    >
+                        <span className="text-white text-2xl">
+                            {isActive ? '⏸' : '▶'}
+                        </span>
+                    </button>
+                ) : (
+                    <button
+                        onClick={stopAlarm}
+                        className="px-8 py-3 rounded-full bg-red-500/80 hover:bg-red-600 text-white animate-pulse font-bold text-sm"
+                    >
+                        알람 끄기
+                    </button>
+                )}
+            </div>
         </div>
     );
 }

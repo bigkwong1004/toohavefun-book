@@ -112,76 +112,86 @@ function ThemeWrapper({ view, setView }: { view: string, setView: any }) {
 
   return (
     <div
-      className="relative min-h-screen flex flex-col"
+      className="relative min-h-screen flex flex-col bg-cover bg-center overflow-hidden"
       style={{ "--color-primary": themeColor } as React.CSSProperties}
     >
       <BackgroundImage />
 
-      <main className="relative z-10 flex-1 flex flex-col max-w-md mx-auto w-full p-6 h-screen">
+      {/* [1] 상단: 카테고리 아이콘 영역 (ThemeSelector) */}
+      <header className="relative z-10 w-full px-6 pt-12 pb-4 flex justify-center shrink-0">
+        <ThemeSelector />
+      </header>
 
-        {/* Header */}
-        <header className="flex flex-col items-center gap-4 mt-4 shrink-0 w-full">
-          <ThemeSelector />
+      {/* [2] 메인 컨텐츠 영역 (Flex-grow로 남은 공간 모두 차지) */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 w-full max-w-md mx-auto min-h-0">
+
+        {/* 명언 영역 */}
+        <div className="mb-8">
           <Affirmation />
-          <AudioControls />
-        </header>
+        </div>
 
-        {/* Main Content View */}
-        <section className="flex-1 flex flex-col justify-start relative overflow-hidden my-4 min-h-0">
+        {/* 메인 뷰 (타이머 등) */}
+        <section className="w-full flex flex-col items-center justify-center">
           {view === 'timer' && <Timer />}
           {view === 'calendar' && <Calendar />}
           {view === 'diary' && <ReadingDiary onBack={() => setView('timer')} />}
           {view === 'community' && <CommunityFeed onBack={() => setView('timer')} />}
         </section>
 
-        {/* AdSense Placeholder */}
-        <div className="shrink-0 mb-4 w-full">
+      </main>
+
+      {/* [3] 하단 영역: 광고 + 내비게이션 */}
+      <footer className="relative z-10 w-full flex flex-col items-center pb-safe shrink-0">
+
+        {/* 오디오 컨트롤 (헤더에서 이동, 혹은 사용자 요청에 따라 위치 조정 가능하나 원본 유지 위해 여기 둠, 하지만 사용자 레이아웃엔 없음. 
+            사용자 레이아웃엔 오디오 컨트롤이 "안 보임". 
+            기존 기능을 유지해야 하므로, 사용자 레이아웃의 빈 공간(예: 메인 하단이나 헤더 아래)에 배치하거나
+            Header의 ThemeSelector 아래에 배치하는 것이 자연스러움. 
+            일단 Header의 ThemeSelector 아래에 배치하여 기능 유지. 
+        */}
+        <div className="absolute top-28 w-full max-w-sm px-6 z-20 opacity-80 hover:opacity-100 transition-opacity">
+          <AudioControls />
+        </div>
+
+
+        {/* 광고 영역 */}
+        <div className="w-full max-w-md px-4 mb-4">
           <AdSensePlaceholder />
         </div>
 
-        {/* Navigation Bar */}
-        <nav className="glass-nav rounded-2xl p-2 mt-auto shrink-0 mb-4">
-          <ul className="flex justify-around items-center">
-            <li className="flex-1">
-              <button
-                onClick={() => setView('timer')}
-                className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'timer' ? 'text-primary bg-white/5' : 'text-white/40'}`}
-              >
-                <span className="material-symbols-outlined text-2xl">timer</span>
-                <span className="text-[9px] font-bold uppercase tracking-tighter">타이머</span>
-              </button>
-            </li>
-            <li className="flex-1">
-              <button
-                onClick={() => setView('calendar')}
-                className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'calendar' ? 'text-primary bg-white/5' : 'text-white/40'}`}
-              >
-                <span className="material-symbols-outlined text-2xl">calendar_month</span>
-                <span className="text-[9px] font-bold uppercase tracking-tighter">히스토리</span>
-              </button>
-            </li>
-            <li className="flex-1">
-              <button
-                onClick={() => setView('diary')}
-                className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'diary' ? 'text-primary bg-white/5' : 'text-white/40'}`}
-              >
-                <span className="material-symbols-outlined text-2xl">auto_stories</span>
-                <span className="text-[9px] font-bold uppercase tracking-tighter">다이어리</span>
-              </button>
-            </li>
-            <li className="flex-1">
-              <button
-                onClick={() => setView('community')}
-                className={`w-full py-3 rounded-xl transition-all flex flex-col items-center gap-1 ${view === 'community' ? 'text-primary bg-white/5' : 'text-white/40'}`}
-              >
-                <span className="material-symbols-outlined text-2xl">groups</span>
-                <span className="text-[9px] font-bold uppercase tracking-tighter">커뮤니티</span>
-              </button>
-            </li>
-          </ul>
-        </nav>
+        {/* 하단 내비게이션 바 */}
+        <div className="w-full max-w-md bg-black/60 backdrop-blur-xl rounded-t-3xl border-t border-white/10 px-6 py-4 flex justify-between items-center text-white/70">
+          <button
+            onClick={() => setView('timer')}
+            className={`flex flex-col items-center gap-1 transition-colors ${view === 'timer' ? 'text-orange-400' : 'hover:text-white'}`}
+          >
+            <span className="text-xl material-symbols-outlined">timer</span>
+            <span className="text-[10px]">타이머</span>
+          </button>
+          <button
+            onClick={() => setView('calendar')}
+            className={`flex flex-col items-center gap-1 transition-colors ${view === 'calendar' ? 'text-orange-400' : 'hover:text-white'}`}
+          >
+            <span className="text-xl material-symbols-outlined">calendar_month</span>
+            <span className="text-[10px]">히스토리</span>
+          </button>
+          <button
+            onClick={() => setView('diary')}
+            className={`flex flex-col items-center gap-1 transition-colors ${view === 'diary' ? 'text-orange-400' : 'hover:text-white'}`}
+          >
+            <span className="text-xl material-symbols-outlined">auto_stories</span>
+            <span className="text-[10px]">다이어리</span>
+          </button>
+          <button
+            onClick={() => setView('community')}
+            className={`flex flex-col items-center gap-1 transition-colors ${view === 'community' ? 'text-orange-400' : 'hover:text-white'}`}
+          >
+            <span className="text-xl material-symbols-outlined">groups</span>
+            <span className="text-[10px]">커뮤니티</span>
+          </button>
+        </div>
+      </footer>
 
-      </main>
     </div>
   );
 }
