@@ -8,12 +8,6 @@ export function Timer() {
     const [isActive, setIsActive] = useState(false);
     const totalTime = 30 * 60;
 
-    // Calculate progress for ring (circumference is approx 289 for r=46)
-    const circumference = 289;
-    const progress = ((totalTime - timeLeft) / totalTime) * circumference;
-
-
-
     const [alarmCtx, setAlarmCtx] = useState<AudioContext | null>(null);
     const [alarmOsc, setAlarmOsc] = useState<OscillatorNode | null>(null);
 
@@ -37,9 +31,6 @@ export function Timer() {
 
             // Loop effect: Ramp up and down rapidly
             const now = ctx.currentTime;
-            // Simple alarm pattern beep-beep-beep
-            // Ideally we'd loop a buffer source, but oscillator is easier for code-only
-            // We can just let it ring continuous or pulsate
 
             // Pulsating alert sound
             oscillator.frequency.setValueAtTime(880, now);
@@ -111,51 +102,41 @@ export function Timer() {
     const toggleTimer = () => setIsActive(!isActive);
 
     return (
-        <div className="flex flex-col items-center justify-center h-full">
-            {/* Timer Ring Container - Reduced size for mobile */}
-            <div className="relative size-60 sm:size-80 transition-all duration-300">
-                <div className="absolute inset-0 flex items-center justify-center z-10 flex-col">
-                    <span className="text-6xl sm:text-7xl font-light tracking-tighter text-white font-display transition-all">
-                        {formatTime(timeLeft)}
-                    </span>
-                    <p className="text-[10px] sm:text-xs font-bold text-white/40 tracking-[0.3em] uppercase mt-4">
-                        {isActive ? '집중하는 중...' : '집중 시간'}
-                    </p>
-                </div>
-                {/* SVG Ring */}
-                <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" fill="none" r="46" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-                    <circle
-                        cx="50" cy="50" fill="none" r="46"
-                        stroke="currentColor"
-                        className="text-primary transition-all duration-1000 ease-linear"
-                        strokeDasharray={circumference}
-                        strokeDashoffset={progress}
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                    />
-                </svg>
+        <div className="flex flex-col items-center justify-center h-full min-h-[400px] pb-40">
+            {/* Plain Text Timer */}
+            <div className="flex flex-col items-center justify-center mb-10">
+                <span className="text-8xl sm:text-9xl font-light tracking-tighter text-white font-display tabular-nums transition-all drop-shadow-2xl">
+                    {formatTime(timeLeft)}
+                </span>
+                <p className="text-sm sm:text-base font-bold text-white/60 tracking-[0.5em] uppercase mt-4">
+                    {isActive ? '집중하는 중...' : '집중 시간'}
+                </p>
             </div>
 
             {/* Play Button - High Visibility update */}
             {!alarmOsc ? (
                 <button
                     onClick={toggleTimer}
-                    className="mt-8 sm:mt-12 size-16 sm:size-20 rounded-full flex items-center justify-center text-black bg-primary hover:brightness-110 transition-all active:scale-95 shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] group z-20"
+                    className="group relative flex items-center justify-center gap-4 px-12 py-6 rounded-full bg-white text-black transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] z-20"
                 >
-                    {isActive ? (
-                        <span className="material-symbols-outlined text-4xl">pause</span>
-                    ) : (
-                        <span className="material-symbols-outlined text-4xl ml-1">play_arrow</span>
-                    )}
+                    <div className={`transition-all duration-300 ${isActive ? 'scale-90' : 'scale-100'}`}>
+                        {isActive ? (
+                            <span className="material-symbols-outlined text-4xl">pause</span>
+                        ) : (
+                            <span className="material-symbols-outlined text-4xl">play_arrow</span>
+                        )}
+                    </div>
+                    <span className="text-xl font-bold tracking-widest uppercase">
+                        {isActive ? '일시정지' : '시작하기'}
+                    </span>
                 </button>
             ) : (
                 <button
                     onClick={stopAlarm}
-                    className="mt-14 px-8 py-4 rounded-full flex items-center justify-center text-white bg-red-500/20 hover:bg-red-500/30 backdrop-blur-md transition-all active:scale-95 border border-red-500/50 animate-pulse"
+                    className="px-12 py-6 rounded-full flex items-center justify-center text-white bg-red-500 hover:bg-red-600 transition-all active:scale-95 shadow-[0_0_50px_rgba(239,68,68,0.6)] animate-pulse"
                 >
-                    <span className="material-symbols-outlined text-2xl mr-2">notifications_off</span>
-                    <span className="font-bold uppercase tracking-widest text-sm">알람 끄기</span>
+                    <span className="material-symbols-outlined text-3xl mr-3">notifications_off</span>
+                    <span className="font-bold uppercase tracking-widest text-lg">알람 끄기</span>
                 </button>
             )}
         </div>
