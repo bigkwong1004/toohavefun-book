@@ -127,7 +127,7 @@ function ThemeWrapper({ view, setView }: { view: string, setView: any }) {
         </header>
 
         {/* Main Content View */}
-        <section className="flex-1 flex flex-col justify-center relative overflow-hidden my-4 min-h-0">
+        <section className="flex-1 flex flex-col justify-start relative overflow-hidden my-4 min-h-0">
           {view === 'timer' && <Timer />}
           {view === 'calendar' && <Calendar />}
           {view === 'diary' && <ReadingDiary onBack={() => setView('timer')} />}
