@@ -112,79 +112,77 @@ function ThemeWrapper({ view, setView }: { view: string, setView: any }) {
 
   return (
     <div
-      className="relative min-h-screen flex flex-col bg-cover bg-center overflow-hidden"
+      className="relative h-[100dvh] w-full bg-cover bg-center overflow-hidden flex flex-col"
       style={{ "--color-primary": themeColor } as React.CSSProperties}
     >
       <BackgroundImage />
 
-      {/* [1] 상단: 카테고리 아이콘 영역 (ThemeSelector) */}
-      <header className="relative z-10 w-full px-6 pt-12 pb-4 flex justify-center shrink-0">
-        <ThemeSelector />
+      {/* [1] 상단: 카테고리 아이콘 영역 */}
+      <header className="relative z-10 w-full px-6 pt-12 pb-4 flex-none">
+        <div className="flex justify-center w-full">
+          <ThemeSelector />
+        </div>
       </header>
 
-      {/* [2] 메인 컨텐츠 영역 (Flex-grow로 남은 공간 모두 차지) */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 w-full max-w-md mx-auto min-h-0">
+      {/* [2] 메인 컨텐츠 영역 (Flex-grow로 남은 공간 모두 차지 + 스크롤 가능) */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-md mx-auto overflow-y-auto min-h-0 no-scrollbar">
 
         {/* 명언 영역 */}
-        <div className="mb-8">
+        <div className="mb-4 shrink-0">
           <Affirmation />
         </div>
 
         {/* 메인 뷰 (타이머 등) */}
-        <section className="w-full flex flex-col items-center justify-center">
+        <section className="w-full flex flex-col items-center justify-center shrink-0">
           {view === 'timer' && <Timer />}
           {view === 'calendar' && <Calendar />}
           {view === 'diary' && <ReadingDiary onBack={() => setView('timer')} />}
           {view === 'community' && <CommunityFeed onBack={() => setView('timer')} />}
         </section>
 
-      </main>
-
-      {/* [3] 하단 영역: 광고 + 내비게이션 */}
-      <footer className="relative z-10 w-full flex flex-col items-center pb-safe shrink-0">
-
-        {/* 오디오 컨트롤 (헤더에서 이동, 혹은 사용자 요청에 따라 위치 조정 가능하나 원본 유지 위해 여기 둠, 하지만 사용자 레이아웃엔 없음. 
-            사용자 레이아웃엔 오디오 컨트롤이 "안 보임". 
-            기존 기능을 유지해야 하므로, 사용자 레이아웃의 빈 공간(예: 메인 하단이나 헤더 아래)에 배치하거나
-            Header의 ThemeSelector 아래에 배치하는 것이 자연스러움. 
-            일단 Header의 ThemeSelector 아래에 배치하여 기능 유지. 
-        */}
-        <div className="absolute top-28 w-full max-w-sm px-6 z-20 opacity-80 hover:opacity-100 transition-opacity">
-          <AudioControls />
-        </div>
-
-
-        {/* 광고 영역 */}
-        <div className="w-full max-w-md px-4 mb-4">
+        {/* 광고 영역 (중간에 배치하되, 메인 컨텐츠 내부에 포함) */}
+        <div className="mt-6 w-full px-6 shrink-0 mb-8">
           <AdSensePlaceholder />
         </div>
 
+      </main>
+
+      {/* [3] 하단 영역: 오디오 컨트롤 + 내비게이션 */}
+      <footer className="relative z-10 w-full flex-none pb-safe-bottom">
+
+        {/* 오디오 컨트롤 */}
+        <div className="w-full max-w-md mx-auto px-6 mb-2">
+          <div className="scale-90 origin-bottom">
+            <AudioControls />
+          </div>
+        </div>
+
         {/* 하단 내비게이션 바 */}
-        <div className="w-full max-w-md bg-black/60 backdrop-blur-xl rounded-t-3xl border-t border-white/10 px-6 py-4 flex justify-between items-center text-white/70">
+        <div className="w-full h-auto bg-black/80 backdrop-blur-xl rounded-t-3xl border-t border-white/10 px-6 py-4 flex justify-between items-center text-white/60">
           <button
             onClick={() => setView('timer')}
-            className={`flex flex-col items-center gap-1 transition-colors ${view === 'timer' ? 'text-orange-400' : 'hover:text-white'}`}
+            className={`flex flex-col items-center gap-1 w-1/4 transition-colors ${view === 'timer' ? 'text-orange-400' : 'hover:text-white'}`}
           >
             <span className="text-xl material-symbols-outlined">timer</span>
             <span className="text-[10px]">타이머</span>
           </button>
           <button
             onClick={() => setView('calendar')}
-            className={`flex flex-col items-center gap-1 transition-colors ${view === 'calendar' ? 'text-orange-400' : 'hover:text-white'}`}
+            className={`flex flex-col items-center gap-1 w-1/4 transition-colors ${view === 'calendar' ? 'text-orange-400' : 'hover:text-white'}`}
           >
             <span className="text-xl material-symbols-outlined">calendar_month</span>
             <span className="text-[10px]">히스토리</span>
           </button>
           <button
             onClick={() => setView('diary')}
-            className={`flex flex-col items-center gap-1 transition-colors ${view === 'diary' ? 'text-orange-400' : 'hover:text-white'}`}
+            className={`flex flex-col items-center gap-1 w-1/4 transition-colors ${view === 'diary' ? 'text-orange-400' : 'hover:text-white'}`}
           >
             <span className="text-xl material-symbols-outlined">auto_stories</span>
             <span className="text-[10px]">다이어리</span>
           </button>
           <button
             onClick={() => setView('community')}
-            className={`flex flex-col items-center gap-1 transition-colors ${view === 'community' ? 'text-orange-400' : 'hover:text-white'}`}
+            className={`flex flex-col items-center gap-1 w-1/4 transition-colors ${view === 'community' ? 'text-orange-400' : 'hover:text-white'}`}
           >
             <span className="text-xl material-symbols-outlined">groups</span>
             <span className="text-[10px]">커뮤니티</span>
