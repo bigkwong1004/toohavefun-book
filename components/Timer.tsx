@@ -102,29 +102,30 @@ export function Timer() {
     const toggleTimer = () => setIsActive(!isActive);
 
     return (
-        <div className="flex flex-col items-center justify-center mb-6">
-            <div className="text-white text-8xl font-thin tracking-tighter drop-shadow-2xl font-mono tabular-nums">
+        <div className="flex flex-col items-center justify-center py-4 w-full">
+            {/* 거대한 시간 텍스트 (원형 제거) */}
+            <div className="text-white text-[6rem] sm:text-[7rem] leading-none font-thin tracking-tighter drop-shadow-2xl font-mono tabular-nums">
                 {formatTime(timeLeft)}
             </div>
-            <span className="text-orange-300 text-sm tracking-widest uppercase mt-2 opacity-80">
-                Focus Time
+            <span className="text-orange-300/80 text-sm tracking-[0.3em] uppercase mt-3">
+                {isActive ? '집중 중...' : 'Focus Time'}
             </span>
 
-            {/* 재생/일시정지 버튼 (반원 형태) */}
-            <div className="mt-12">
+            {/* 재생 버튼 */}
+            <div className="mt-8">
                 {!alarmOsc ? (
                     <button
                         onClick={toggleTimer}
-                        className="w-24 h-12 bg-white/20 backdrop-blur-sm rounded-t-full border-t border-l border-r border-white/30 hover:bg-white/30 active:scale-95 transition flex items-end justify-center pb-2"
+                        className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-full border-2 border-white/20 flex items-center justify-center hover:bg-white/20 hover:scale-105 active:scale-95 transition-all"
                     >
-                        <span className="text-white text-2xl">
+                        <span className="text-white text-3xl ml-1">
                             {isActive ? '⏸' : '▶'}
                         </span>
                     </button>
                 ) : (
                     <button
                         onClick={stopAlarm}
-                        className="px-8 py-3 rounded-full bg-red-500/80 hover:bg-red-600 text-white animate-pulse font-bold text-sm"
+                        className="px-8 py-3 rounded-full bg-red-500/90 hover:bg-red-600 text-white animate-pulse font-bold text-base shadow-lg"
                     >
                         알람 끄기
                     </button>
