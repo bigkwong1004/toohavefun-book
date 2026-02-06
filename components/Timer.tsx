@@ -102,7 +102,7 @@ export function Timer() {
     const toggleTimer = () => setIsActive(!isActive);
 
     return (
-        <div className="flex flex-col items-center justify-center h-full min-h-[400px] pb-40">
+        <div className="flex flex-col items-center justify-start h-full min-h-[400px] pt-24 sm:pt-32 pb-40">
             {/* Plain Text Timer */}
             <div className="flex flex-col items-center justify-center mb-10">
                 <span className="text-8xl sm:text-9xl font-light tracking-tighter text-white font-display tabular-nums transition-all drop-shadow-2xl">
