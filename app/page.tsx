@@ -155,8 +155,8 @@ function ThemeWrapper({ view, setView }: { view: string, setView: any }) {
       </main>
 
       {/* ========== [3] Footer: 하단 버튼 (바닥 고정) ========== */}
-      <footer className="relative z-10 w-full flex-none pb-safe pb-2">
-        <div className="w-full bg-black/80 backdrop-blur-xl rounded-t-3xl border-t border-white/10 px-6 py-3 flex justify-between items-center text-white/60">
+      <footer className="relative z-10 w-full flex-none">
+        <div className="w-full min-h-[80px] bg-black/80 backdrop-blur-xl rounded-t-3xl border-t border-white/10 px-6 py-4 pb-safe flex justify-between items-center text-white/60">
           <button
             onClick={() => setView('timer')}
             className={`flex flex-col items-center gap-0.5 w-1/4 transition-colors ${view === 'timer' ? 'text-orange-400' : 'hover:text-white'}`}
